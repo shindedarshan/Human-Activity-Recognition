@@ -23,7 +23,7 @@ def preprocess_data(infile, outfile):
     with open(outfile, 'wb') as file:
         pickle.dump(subject_data, file)
         
-basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
+basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
 files = glob.glob('*.dat')
