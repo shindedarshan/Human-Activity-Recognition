@@ -46,7 +46,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
                 activity_file = open(basepath + 'activity' + str(activity) + '.pkl', 'rb')
                 act = pickle.load(activity_file)
                 rows = act['data'].shape[0]
-                act['data'].append(activity_df)
+                act['data'] = act['data'].append(activity_df)
                 index = index + rows
                 act['target'] = act['target'].append(activity_target)
                 activity_data = act
