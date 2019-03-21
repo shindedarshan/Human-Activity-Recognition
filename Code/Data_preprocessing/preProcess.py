@@ -40,8 +40,6 @@ def preprocess_data(basepath, infile, outfile, wrt):
             activity_target_list = [target] * rows_count
             index = np.array(list(range(rows_count)))
             activity_target = pd.Series(activity_target_list, index.tolist())
-            print(activity_target.unique())
-            #target
             activity_data = {'data': activity_df, 'target': activity_target}
             
             if os.path.exists(basepath + 'activity' + str(activity) + '.pkl'):
@@ -50,8 +48,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
                 rows = act['data'].shape[0]
                 act['data'].append(activity_df)
                 index = index + rows
-                activity_target = activity_target.reindex(index.tolist())
-                act['target'].append(activity_target)
+                act['target'] = act['target'].append(activity_target)
                 activity_data = act
             
             with open('activity' + str(activity) + '.pkl', 'wb') as file:
@@ -60,9 +57,14 @@ def preprocess_data(basepath, infile, outfile, wrt):
 basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
-files = glob.glob('*.dat')
+data_files = glob.glob('*.dat')
+old_pickle_files = glob.glob('*.pkl')
 
-for infile in files:
+for oldfile in old_pickle_files:
+    os.remove(oldfile)
+
+for infile in data_files:
     print(infile)
     outfile = infile.split('.')[0] + '.pkl'
+    preprocess_data(basepath + '/', infile, outfile, 'subject')
     preprocess_data(basepath + '/', infile, outfile, 'activity')
