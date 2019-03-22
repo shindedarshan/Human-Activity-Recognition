@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 
 objects = []
-with (open("dataset/PAMAP2_Dataset/PAMAP2_Dataset/Protocol/activity5.0.pkl", "rb")) as openfile:
+with (open("C:/Users/Bivas/Documents/AMLProject/Human-Activity-Recognition/Data/PAMAP2_Dataset/Protocol/activity5.pkl", "rb")) as openfile:
     while True:
         try:
             objects.append(pickle.load(openfile))
@@ -12,14 +12,14 @@ with (open("dataset/PAMAP2_Dataset/PAMAP2_Dataset/Protocol/activity5.0.pkl", "rb
             break
 
 objects1 = []
-with (open("dataset/PAMAP2_Dataset/PAMAP2_Dataset/Protocol/activity5.0.pkl", "rb")) as openfile:
+with (open("C:/Users/Bivas/Documents/AMLProject/Human-Activity-Recognition/Data/PAMAP2_Dataset/Protocol/activity5.pkl", "rb")) as openfile:
     while True:
         try:
             objects1.append(pickle.load(openfile))
         except EOFError:
             break
-  
-features = objects[0]['data']
+
+features = objects[0]['data'].drop(['imu1temp','imu2temp','imu3temp','activityid'],axis=1)
 labels = np.array(objects[0]['target'])
 labels = labels.reshape((len(labels),1))
 
