@@ -25,7 +25,7 @@ def getWIndowedDataInContinuousChunks(dataframe):
             df = window_stack(df, 500)
             df = pd.DataFrame(df)
             startIdx = idx
-            idx = startIdx
+            #idx = startIdx
             new_dataframe = new_dataframe.append(df)
     return new_dataframe
             
@@ -40,6 +40,7 @@ def getChunk(file):
     data['target'] = target.values
     
     for group in groups:
+        print('Working on:', group)
         df = data.loc[data['target'] == group]
         df = df.sort_values(by=['timestamp'])
         df = getWIndowedDataInContinuousChunks(df)
