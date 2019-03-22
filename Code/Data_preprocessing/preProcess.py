@@ -44,8 +44,8 @@ def preprocess_data(basepath, infile, outfile, wrt):
             activity_target = pd.Series(activity_target_list, index.tolist())
             activity_data = {'data': activity_df, 'target': activity_target}
             
-            if os.path.exists(basepath + 'activity' + str(activity) + '.pkl'):
-                activity_file = open(basepath + 'activity' + str(activity) + '.pkl', 'rb')
+            if os.path.exists(basepath + 'activity' + str(int(activity)) + '.pkl'):
+                activity_file = open(basepath + 'activity' + str(int(activity)) + '.pkl', 'rb')
                 act = pickle.load(activity_file)
                 rows = act['data'].shape[0]
                 act['data'] = act['data'].append(activity_df)
@@ -53,7 +53,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
                 act['target'] = act['target'].append(activity_target)
                 activity_data = act
             
-            with open('activity' + str(activity) + '.pkl', 'wb') as file:
+            with open('activity' + str(int(activity)) + '.pkl', 'wb') as file:
                     pickle.dump(activity_data, file)
         
 basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
