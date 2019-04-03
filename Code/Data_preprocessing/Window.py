@@ -12,7 +12,7 @@ def downsample(x,factor):
     return dfn
     
 def window_stack(a, width, stepsize=1):
-    target = a['target'].index[0]
+    target = a['target'].iloc[0]
     a = a.drop(['target'], axis = 1)
     a = downsample(a, 10)
     a = a.drop(['timestamp'], axis = 1)
