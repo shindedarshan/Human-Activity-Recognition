@@ -16,6 +16,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
                     "imu1ac2_y", "imu1ac2_z", "imu2ac2_x", "imu2ac2_y", "imu2ac2_z", "imu3ac2_x", "imu3ac2_y", "imu3ac2_z"]
     
     subject = subject.drop(drop_columns, axis = 1)
+    subject = subject[subject.activityid != 0]
     
     #Interpolate nans
     subject = subject.astype(float).interpolate(method = 'linear', limit_direction = 'forward', axis = 0)

@@ -56,12 +56,10 @@ def getChunk(file, outfile):
     data['target'] = target.values
     outdf = pd.DataFrame()
     for group in groups:
-        print('Working on:', group)
         df = data.loc[data['target'] == group]
         df = df.sort_values(by=['timestamp'])
         df = getWIndowedDataInContinuousChunks(df)
         new_df = new_df.append(df)
-        print(new_df.shape)
     outdf = outdf.append(new_df)
     with open(outfile, 'wb') as file:
             pickle.dump(outdf, file)
@@ -72,5 +70,6 @@ os.chdir(basepath)
 pickle_files = glob.glob('*.pkl')
 
 for file in pickle_files:
+  print('processing', file)
   outfile = 'windowed_' + file 
   getChunk(file, outfile)
