@@ -6,8 +6,10 @@ import os, glob
 def downsample(x,factor):
     n = int(x.shape[0]/factor)*factor
     d1 = x[:n].values.reshape(-1, factor, x.shape[1]).mean(1)
-    d2 = x[n:].values.mean(axis = 0).reshape(1,33)
-    dfn = pd.DataFrame(np.concatenate((d1,d2),axis = 0))
+    if x.shape[0] % n == 0: dfn = pd.DataFrame(d1)
+    else:
+        d2 = x[n:].values.mean(axis = 0).reshape(1,x.shape[1])
+        dfn = pd.DataFrame(np.concatenate((d1,d2),axis = 0))
     dfn.columns = x.columns
     return dfn
     
@@ -52,6 +54,10 @@ def getChunk(file, outfile):
     data_from_pickle = pickle.load(pklFile)
     target = data_from_pickle['target']
     data = data_from_pickle['data']
+    if file[0] == 's':
+        data = data.drop(['subjectid'], axis = 1)
+    elif file[0] == 'a':
+        data = data.drop(['activityid'], axis = 1)
     groups = target.unique()
     data['target'] = target.values
     outdf = pd.DataFrame()
@@ -67,13 +73,14 @@ def getChunk(file, outfile):
 basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
-pickle_files = glob.glob('*.pkl')
-old_pickle_files = glob.glob('windowed*.pkl')
 
+old_pickle_files = glob.glob('windowed*.pkl')
 for oldfile in old_pickle_files:
     os.remove(oldfile)
 
+pickle_files = glob.glob('*.pkl')
+
 for file in pickle_files:
-  print('processing', file)
-  outfile = 'windowed_' + file 
-  getChunk(file, outfile)
+    print('Processing', file)
+    outfile = 'windowed_' + file 
+    getChunk(file, outfile)
