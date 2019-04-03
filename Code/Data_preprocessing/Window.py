@@ -68,6 +68,10 @@ basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
 pickle_files = glob.glob('*.pkl')
+old_pickle_files = glob.glob('windowed*.pkl')
+
+for oldfile in old_pickle_files:
+    os.remove(oldfile)
 
 for file in pickle_files:
   print('processing', file)
