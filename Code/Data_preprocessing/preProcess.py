@@ -3,6 +3,7 @@ import os, glob
 import pickle
 import os.path
 import numpy as np
+from sklearn.preprocessing import Imputer
 
 def preprocess_data(basepath, infile, outfile, wrt):
     headers = ["timestamp", "activityid", "heartrate", "imu1temp", "imu1ac1_x", "imu1ac1_y", "imu1ac1_z", "imu1ac2_x", "imu1ac2_y", "imu1ac2_z",
@@ -15,12 +16,15 @@ def preprocess_data(basepath, infile, outfile, wrt):
     drop_columns = ["inv11", "inv12", "inv13", "inv14", "inv21", "inv22", "inv23", "inv24", "inv31", "inv32", "inv33", "inv34", "imu1ac2_x", 
                     "imu1ac2_y", "imu1ac2_z", "imu2ac2_x", "imu2ac2_y", "imu2ac2_z", "imu3ac2_x", "imu3ac2_y", "imu3ac2_z"]
     
-    subject = subject.drop(drop_columns, axis = 1)
-    subject = subject[subject.activityid != 0]
     
     #Interpolate nans
     subject = subject.astype(float).interpolate(method = 'linear', limit_direction = 'forward', axis = 0)
-    subject = subject.dropna()
+    imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
+    subject = imp.fit_transform(subject)
+    subject = pd.DataFrame(subject)
+    subject.columns = headers
+    subject = subject.drop(drop_columns, axis = 1)
+    subject = subject[subject.activityid != 0]
     
     if wrt == 'subject':
         target = subject['activityid']
@@ -60,7 +64,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
             with open('activity' + str(int(activity)) + '.pkl', 'wb') as file:
                     pickle.dump(activity_data, file)
         
-basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
+basepath = os.path.abspath('PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
 data_files = glob.glob('*.dat')
