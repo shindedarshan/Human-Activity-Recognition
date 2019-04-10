@@ -13,8 +13,9 @@ class Models:
     
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
-    def Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,filename):
-        log_reg_model=LogisticRegression()
+    @staticmethod
+    def Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,filename,class_weights):
+        log_reg_model=LogisticRegression(class_weight=class_weights)
         log_reg_model.fit(X_train,y_train)
         print("Train Accuracy",log_reg_model.score(X_train,y_train))
         print("Test Accuracy",log_reg_model.score(X_test,y_test))
@@ -23,6 +24,7 @@ class Models:
     
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
+    @staticmethod
     def Run_KNN_Model(X_train,X_test,y_train,y_test,filename):
         knn_model=KNeighborsClassifier()
         knn_model.fit(X_train,y_train)
@@ -32,8 +34,9 @@ class Models:
     
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
-    def Run_Decision_Tree(X_train,X_test,y_train,y_test,filename):
-        clf = tree.DecisionTreeClassifier()
+    @staticmethod
+    def Run_Decision_Tree(X_train,X_test,y_train,y_test,filename,class_weights):
+        clf = tree.DecisionTreeClassifier(class_weight=class_weights,max_features ='sqrt',min_impurity_decrease =1e-2)
         clf.fit(X_train,y_train)
         print(clf.score(X_test,y_test))
         with open(filename,'wb+') as file:
@@ -41,6 +44,7 @@ class Models:
             
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
+    @staticmethod
     def Run_NaiveBayesModel(X_train,X_test,y_train,y_test,filename):
         gnb = GaussianNB()
         gnb.fit(X_train,y_train)
@@ -50,15 +54,17 @@ class Models:
 
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
-    def Run_SVM(X_train,X_test,y_train,y_test,filename):
-        clf = svm.SVC(gamma='scale',)
+    @staticmethod
+    def Run_SVM(X_train,X_test,y_train,y_test,filename,class_weights):
+        clf = svm.SVC(gamma='scale',class_weight=class_weights)
         clf.fit(X_train,y_train) 
         print(clf.score(X_test,y_test))
         with open(filename,'wb+') as file:
             pickle.dump(clf,file)
     
     #Input data_subject. Type Pandas DataFrame. Has Target Column
-    #Output: Saves Model File, prints accuracy   
+    #Output: Saves Model File, prints accuracy  
+    @staticmethod 
     def Run_BoostedTree(X_train,X_test,y_train,y_test,filename,nclasses):
         train_data = lgb.Dataset(X_train, label=y_train)
         parameters = {
@@ -87,9 +93,5 @@ class Models:
         print(accuracy_lgbm)
         with open(filename,'wb+') as file:
             pickle.dump(model,file)
-
-
-        
-        
     
     
