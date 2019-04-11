@@ -5,7 +5,7 @@ import glob
 import numpy as np
 import pandas as pd
 from Model import Models
-#from sklearn import preprocessing
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 
@@ -15,8 +15,7 @@ def preprocess_dataframe(data,split=False):
     y=y.astype(np.int)
     X=data.values
     data=None
-    #X=preprocessing.normalize(X)
-    X = (X - X.mean()) / (X.max() - X.min())
+    X=preprocessing.normalize(X)
     if split:
         return train_test_split(X,y)
     else:
@@ -70,7 +69,7 @@ def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
     elif model=="svm":
         Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
+        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"Decision-Tree-Model",class_weights)
     elif model=="logistic":
         Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model",class_weights)
     elif model=="knn":
