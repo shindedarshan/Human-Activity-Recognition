@@ -9,20 +9,24 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 
-def preprocess_dataframe(data,split=False):
+def preprocess_dataframe(data,split=False,category = 0):
     y=data['target'].values
     data=data.drop(['target'],axis=1)
     y=y.astype(np.int)
     X=data.values
     data=None
     X=preprocessing.normalize(X)
+    #X = (X - X.mean()) / (X.max() - X.min())
     if split:
-        return train_test_split(X,y)
+	if(category == 0):
+        	return train_test_split(X,y)
+	else:
+		return train_test_split(X, y, test_size=0.25, random_state=0, shuffle = True, stratify = y)
     else:
         return X,y
 
 def Run_LOSO(model):
-    basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
+    basepath = os.path.abspath('../../../data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
     subject_files = glob.glob('windowed_subject*.pkl')
     for i in range(len(subject_files)):
@@ -39,9 +43,8 @@ def Run_LOSO(model):
             train_data = train_data.append(data_from_pickle) 
         X_train,y_train=preprocess_dataframe(train_data)
         class_weights=get_class_weights(y_train)
-        modelFile = str(model) + 'LOSO_model (subject_' + str(subject_files[i][16:19]) + ')'
-        RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
-        
+        RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+
 def get_class_weights(y_train):
     labels=np.unique(y_train)
     weights=compute_class_weight('balanced', labels, y_train)
@@ -49,10 +52,10 @@ def get_class_weights(y_train):
     for i,w in enumerate(weights):
         class_weight_dict[labels[i]]=weights[i]
         
-    print(class_weight_dict)
+    #print(class_weight_dict)
 
 def Run_CV(model):
-    basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
+    basepath = os.path.abspath('../../../data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
     subject_files = glob.glob('windowed_subject*.pkl')
     all_subjects = pd.DataFrame()
@@ -62,22 +65,61 @@ def Run_CV(model):
         all_subjects=all_subjects.append(data_from_pickle)
     X_train,X_test,y_train,y_test=preprocess_dataframe(all_subjects,True)
     class_weights=get_class_weights(y_train)
-    modelFile = str(model) + '_model'
-    RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+
+def Run_activity(model):
+    basepath = os.path.abspath('../../../data/PAMAP2_Dataset/Protocol/')
+    os.chdir(basepath)
+    activity_files = glob.glob('windowed_activity*.pkl')
+    all_activities = pd.DataFrame()
+    for file in activity_files:
+        pklfile = open(file, 'rb')
+        data_from_pickle = pickle.load(pklfile)
+        all_activities = all_activities.append(data_from_pickle)
+    X_train,X_test,y_train,y_test=preprocess_dataframe(all_activities,True)
+    class_weights=get_class_weights(y_train)
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+
+def Run_act(model,category):
+    basepath = os.path.abspath('../../../data/PAMAP2_Dataset/Protocol/')
+    os.chdir(basepath)
+    file_name = 'windowed_activity' + category + '.pkl'
+    activity_file = glob.glob(file_name)
+    activity = pd.DataFrame()
+    pklfile = open(activity_file[0], 'rb')
+    data_from_pickle = pickle.load(pklfile)
+    activity = activity.append(data_from_pickle)
+    X_train,X_test,y_train,y_test= preprocess_dataframe(activity,True,category)
+    class_weights=get_class_weights(y_train)
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+
+def Run_sub(model,category):
+    basepath = os.path.abspath('../../../data/PAMAP2_Dataset/Protocol/')
+    os.chdir(basepath)
+    file_name = 'windowed_subject' + category + '.pkl'
+    subject_file = glob.glob(file_name)
+    subject = pd.DataFrame()
+    pklfile = open(subject_file[0], 'rb')
+    data_from_pickle = pickle.load(pklfile)
+    subject = subject.append(data_from_pickle)
+    X_train,X_test,y_train,y_test= preprocess_dataframe(subject,True, category)
+    class_weights=get_class_weights(y_train)
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
     
-def RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile):
+def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
+    output=""
     if model=="naive-bayes":
-        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,modelFile)
+        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,"Naive-Bayes-Model")
     elif model=="svm":
-        Models.Run_SVM(X_train,X_test,y_train,y_test,modelFile,class_weights)
+        Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,modelFile,class_weights)
+        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="logistic":
-        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,modelFile,class_weights)
+        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model",class_weights)
     elif model=="knn":
-        Models.Run_KNN_Model(X_train,X_test,y_train,y_test,modelFile)
+        Models.Run_KNN_Model(X_train,X_test,y_train,y_test,"KNN-Model")
     elif model=="boosted-tree":
-        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,modelFile,25)
+        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25)
     elif model=="adaboost":
         pass
     else:
@@ -85,10 +127,15 @@ def RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile):
 
 model=sys.argv[1]
 mode=sys.argv[2]
+category=sys.argv[3]
 if mode=="LOSO":
     Run_LOSO(model)
 elif mode=="cv":
     Run_CV(model)
+elif mode=="act":
+    Run_act(model,category)
+elif mode=="sub":
+    Run_sub(model,category)
 else:
     print("Enter Valid Mode")
 
