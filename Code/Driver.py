@@ -69,7 +69,7 @@ def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
     elif model=="svm":
         Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
+        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"Decision-Tree-Model",class_weights)
     elif model=="logistic":
         Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model",class_weights)
     elif model=="knn":

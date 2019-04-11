@@ -15,7 +15,7 @@ class Models:
     #Output: Saves Model File, prints accuracy
     @staticmethod
     def Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,filename,class_weights):
-        log_reg_model=LogisticRegression(class_weight=class_weights)
+        log_reg_model=LogisticRegression()
         log_reg_model.fit(X_train,y_train)
         print("Train Accuracy",log_reg_model.score(X_train,y_train))
         print("Test Accuracy",log_reg_model.score(X_test,y_test))
@@ -36,7 +36,7 @@ class Models:
     #Output: Saves Model File, prints accuracy
     @staticmethod
     def Run_Decision_Tree(X_train,X_test,y_train,y_test,filename,class_weights):
-        clf = tree.DecisionTreeClassifier(class_weight=class_weights,max_features ='sqrt',min_impurity_decrease =1e-2)
+        clf = tree.DecisionTreeClassifier(class_weight=class_weights,max_features ='sqrt',min_impurity_decrease =1e-3)
         clf.fit(X_train,y_train)
         print(clf.score(X_test,y_test))
         with open(filename,'wb+') as file:
@@ -56,7 +56,7 @@ class Models:
     #Output: Saves Model File, prints accuracy
     @staticmethod
     def Run_SVM(X_train,X_test,y_train,y_test,filename,class_weights):
-        clf = svm.SVC(gamma='scale',class_weight=class_weights)
+        clf = svm.SVC(gamma='scale',class_weight=class_weights,cache_size=1000)
         clf.fit(X_train,y_train) 
         print(clf.score(X_test,y_test))
         with open(filename,'wb+') as file:
@@ -70,21 +70,22 @@ class Models:
         parameters = {
             'application': 'multiclass',
             'metric': 'multi_logloss',
-            'num_class':nclasses,
+            'num_class':n_classesknj,
             'max_depth': 10,
             'is_unbalance': 'true',
             'boosting': 'gbdt',
             'num_leaves': 10,
             'feature_fraction': 0.7,
             'bagging_fraction': 0.7,
-            'min_data_in_leaf': 100,
+            'min_data_in_leaf': 1000,
             'min_sum_hessian_in_leaf': 1e-3,
             'bagging_freq': 20,
             'max_bin' : 256,
             'learning_rate': 0.05,
             'verbose': 1
         }
-        model = lgb.train(parameters,train_data,num_boost_round=20)
+
+        model = lgb.train(parameters,train_data,num_boost_round=200)
         result = []
         prediction = model.predict(X_test)
         for pred in prediction:
