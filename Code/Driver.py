@@ -7,6 +7,7 @@ import pandas as pd
 from Model import Models
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
+from sklearn.utils.class_weight import compute_class_weight
 
 def preprocess_dataframe(data,split=False):
     y=data['target'].values
@@ -37,7 +38,16 @@ def Run_LOSO(model):
             data_from_pickle = pickle.load(pklfile)
             train_data = train_data.append(data_from_pickle) 
         X_train,y_train=preprocess_dataframe(train_data)
-        RunModel(X_train,X_test,y_train,y_test,model)
+        class_weights=get_class_weights(y_train)
+        RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+def get_class_weights(y_train):
+    labels=np.unique(y_train)
+    weights=compute_class_weight('balanced', labels, y_train)
+    class_weight_dict={}
+    for i,w in enumerate(weights):
+        class_weight_dict[labels[i]]=weights[i]
+        
+    print(class_weight_dict)
 
 def Run_CV(model):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
@@ -49,21 +59,23 @@ def Run_CV(model):
         data_from_pickle = pickle.load(pklfile)
         all_subjects=all_subjects.append(data_from_pickle)
     X_train,X_test,y_train,y_test=preprocess_dataframe(all_subjects,True)
-    RunModel(X_train,X_test,y_train,y_test,model)
+    class_weights=get_class_weights(y_train)
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
     
-def RunModel(X_train,X_test,y_train,y_test,model):
+def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
+    output=""
     if model=="naive-bayes":
-            Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,"Naive-Bayes-Model")
+        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,"Naive-Bayes-Model")
     elif model=="svm":
-        Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model")
+        Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"SVM-Model")
+        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
     elif model=="logistic":
-        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model")
+        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model",class_weights)
     elif model=="knn":
         Models.Run_KNN_Model(X_train,X_test,y_train,y_test,"KNN-Model")
     elif model=="boosted-tree":
-        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25)
+        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25,class_weights)
     elif model=="adaboost":
         pass
     else:
