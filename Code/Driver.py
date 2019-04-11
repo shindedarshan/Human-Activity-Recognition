@@ -5,7 +5,7 @@ import glob
 import numpy as np
 import pandas as pd
 from Model import Models
-from sklearn import preprocessing
+#from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 
@@ -15,7 +15,8 @@ def preprocess_dataframe(data,split=False):
     y=y.astype(np.int)
     X=data.values
     data=None
-    X=preprocessing.normalize(X)
+    #X=preprocessing.normalize(X)
+    X = (X - X.mean()) / (X.max() - X.min())
     if split:
         return train_test_split(X,y)
     else:
