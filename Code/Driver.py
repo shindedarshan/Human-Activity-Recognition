@@ -75,7 +75,7 @@ def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
     elif model=="knn":
         Models.Run_KNN_Model(X_train,X_test,y_train,y_test,"KNN-Model")
     elif model=="boosted-tree":
-        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25,class_weights)
+        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25)
     elif model=="adaboost":
         pass
     else:
