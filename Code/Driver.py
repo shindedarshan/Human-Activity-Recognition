@@ -39,7 +39,9 @@ def Run_LOSO(model):
             train_data = train_data.append(data_from_pickle) 
         X_train,y_train=preprocess_dataframe(train_data)
         class_weights=get_class_weights(y_train)
-        RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+        modelFile = str(model) + 'LOSO_model (subject_' + str(subject_files[i][16:19]) + ')'
+        RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
+        
 def get_class_weights(y_train):
     labels=np.unique(y_train)
     weights=compute_class_weight('balanced', labels, y_train)
@@ -60,22 +62,22 @@ def Run_CV(model):
         all_subjects=all_subjects.append(data_from_pickle)
     X_train,X_test,y_train,y_test=preprocess_dataframe(all_subjects,True)
     class_weights=get_class_weights(y_train)
-    RunModel(X_train,X_test,y_train,y_test,model,class_weights)
+    modelFile = str(model) + '_model'
+    RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
     
-def RunModel(X_train,X_test,y_train,y_test,model,class_weights):
-    output=""
+def RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile):
     if model=="naive-bayes":
-        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,"Naive-Bayes-Model")
+        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,modelFile)
     elif model=="svm":
-        Models.Run_SVM(X_train,X_test,y_train,y_test,"SVM-Model",class_weights)
+        Models.Run_SVM(X_train,X_test,y_train,y_test,modelFile,class_weights)
     elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,"Decision-Tree-Model",class_weights)
+        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,modelFile,class_weights)
     elif model=="logistic":
-        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,"Logistic-Regression-Model",class_weights)
+        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,modelFile,class_weights)
     elif model=="knn":
-        Models.Run_KNN_Model(X_train,X_test,y_train,y_test,"KNN-Model")
+        Models.Run_KNN_Model(X_train,X_test,y_train,y_test,modelFile)
     elif model=="boosted-tree":
-        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,"boosted-tree-Model",25)
+        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,modelFile,25)
     elif model=="adaboost":
         pass
     else:
