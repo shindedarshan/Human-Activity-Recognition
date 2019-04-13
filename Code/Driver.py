@@ -9,17 +9,19 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 
-def preprocess_dataframe(data,split=False):
-    y=data['target'].values
-    data=data.drop(['target'],axis=1)
-    y=y.astype(np.int)
-    X=data.values
-    data=None
-    X=preprocessing.normalize(X)
+def preprocess_dataframe(data, split = False, category = 0):
+    y = data['target'].values
+    data = data.drop(['target'],axis = 1)
+    y = y.astype(np.int)
+    X = data.values
+    X = preprocessing.normalize(X)
     if split:
-        return train_test_split(X,y)
+        if(category == 0):
+        	return train_test_split(X, y)
+        else:
+            return train_test_split(X, y, test_size = 0.25, random_state = 0, shuffle = True, stratify = y)
     else:
-        return X,y
+        return X, y
 
 def Run_LOSO(model):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
@@ -30,27 +32,26 @@ def Run_LOSO(model):
         temp_file = np.copy(subject_files).tolist()
         pklfile = open(subject_files[i], 'rb')
         test_data = pickle.load(pklfile)
-        X_test,y_test=preprocess_dataframe(test_data)
+        X_test, y_test = preprocess_dataframe(test_data)
         temp_file.remove(subject_files[i])
         train_data = pd.DataFrame()
         for file in temp_file:
             pklfile = open(file, 'rb')
             data_from_pickle = pickle.load(pklfile)
             train_data = train_data.append(data_from_pickle) 
-        X_train,y_train=preprocess_dataframe(train_data)
-        class_weights=get_class_weights(y_train)
-        modelFile = str(model) + 'LOSO_model (subject_' + str(subject_files[i][16:19]) + ')'
-        RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
+        X_train, y_train = preprocess_dataframe(train_data)
+        class_weights = get_class_weights(y_train)
+        modelFile = str(model) + '_LOSO_model (subject_' + str(subject_files[i][16:19]) + ')'
+        basepath = os.path.abspath('../Model_Files/')
+        RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
         
 def get_class_weights(y_train):
-    labels=np.unique(y_train)
-    weights=compute_class_weight('balanced', labels, y_train)
-    class_weight_dict={}
+    labels = np.unique(y_train)
+    weights = compute_class_weight('balanced', labels, y_train)
+    class_weight_dict = {}
     for i,w in enumerate(weights):
-        class_weight_dict[labels[i]]=weights[i]
+        class_weight_dict[labels[i]] = weights[i]
         
-    print(class_weight_dict)
-
 def Run_CV(model):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
@@ -59,70 +60,67 @@ def Run_CV(model):
     for file in subject_files:
         pklfile = open(file, 'rb')
         data_from_pickle = pickle.load(pklfile)
-        all_subjects=all_subjects.append(data_from_pickle)
-    X_train,X_test,y_train,y_test=preprocess_dataframe(all_subjects,True)
-    class_weights=get_class_weights(y_train)
-    modelFile = str(model) + '_model'
-    RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile)
+        all_subjects = all_subjects.append(data_from_pickle)
+    X_train, X_test, y_train, y_test = preprocess_dataframe(all_subjects, True)
+    class_weights = get_class_weights(y_train)
+    basepath = os.path.abspath('../Model_Files/')
+    modelFile = str(model) + '_CV_model'
+    RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
     
-def RunModel(X_train,X_test,y_train,y_test,model,class_weights,modelFile):
-    if model=="naive-bayes":
-        Models.Run_NaiveBayesModel(X_train,X_test,y_train,y_test,modelFile)
-    elif model=="svm":
-        Models.Run_SVM(X_train,X_test,y_train,y_test,modelFile,class_weights)
-    elif model=="decision-tree":
-        Models.Run_Decision_Tree(X_train,X_test,y_train,y_test,modelFile,class_weights)
-    elif model=="logistic":
-        Models.Run_Logistic_Regression_Model(X_train,X_test,y_train,y_test,modelFile,class_weights)
-    elif model=="knn":
-        Models.Run_KNN_Model(X_train,X_test,y_train,y_test,modelFile)
-    elif model=="boosted-tree":
-        Models.Run_BoostedTree(X_train,X_test,y_train,y_test,modelFile,25)
-    elif model=="adaboost":
+def Run_act(model, category):
+    basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
+    os.chdir(basepath)
+    file_name = 'windowed_activity' + category + '.pkl'
+    activity_file = glob.glob(file_name)
+    activity = pd.DataFrame()
+    pklfile = open(activity_file[0], 'rb')
+    data_from_pickle = pickle.load(pklfile)
+    activity = activity.append(data_from_pickle)
+    X_train, X_test, y_train, y_test = preprocess_dataframe(activity, True, category)
+    class_weights = get_class_weights(y_train)
+    basepath = os.path.abspath('../Model_Files/')
+    modelFile = str(model) + '_activity_model (activity_' + category + ')'
+    RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+
+def Run_sub(model, category):
+    basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
+    os.chdir(basepath)
+    file_name = 'windowed_subject' + category + '.pkl'
+    subject_file = glob.glob(file_name)
+    subject = pd.DataFrame()
+    pklfile = open(subject_file[0], 'rb')
+    data_from_pickle = pickle.load(pklfile)
+    subject = subject.append(data_from_pickle)
+    X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, category)
+    class_weights = get_class_weights(y_train)
+    basepath = os.path.abspath('../Model_Files/')
+    modelFile = str(model) + '_activity_model (subject_' + category + ')'
+    RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+
+    
+def RunModel(X_train, X_test, y_train, y_test, model, class_weights, modelFile):
+    if model == "naive-bayes":
+        Models.Run_NaiveBayesModel(X_train, X_test, y_train, y_test, modelFile)
+    elif model == "svm":
+        Models.Run_SVM(X_train, X_test, y_train, y_test, modelFile, class_weights)
+    elif model == "decision-tree":
+        Models.Run_Decision_Tree(X_train, X_test, y_train, y_test, modelFile, class_weights)
+    elif model == "logistic":
+        Models.Run_Logistic_Regression_Model(X_train, X_test, y_train, y_test, modelFile, class_weights)
+    elif model == "knn":
+        Models.Run_KNN_Model(X_train, X_test, y_train, y_test, modelFile)
+    elif model == "boosted-tree":
+        Models.Run_BoostedTree(X_train, X_test, y_train, y_test, modelFile, 25)
+    elif model == "adaboost":
         pass
     else:
         print("Enter valid model")
 
-model=sys.argv[1]
-mode=sys.argv[2]
-if mode=="LOSO":
+model = sys.argv[1]
+mode = sys.argv[2]
+if mode == "LOSO":
     Run_LOSO(model)
-elif mode=="cv":
+elif mode == "cv":
     Run_CV(model)
 else:
     print("Enter Valid Mode")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-model=sys.argv[1]
-mode=sys.argv[2]
-

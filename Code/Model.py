@@ -10,7 +10,6 @@ from sklearn.naive_bayes import GaussianNB
 
 class Models:
    
-    
     #Input data_subject. Type Pandas DataFrame. Has Target Column
     #Output: Saves Model File, prints accuracy
     @staticmethod
