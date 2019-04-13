@@ -1,0 +1,27 @@
+windowed_subject108.pkl
+('Train Accuracy', 0.7862861570247934)
+('Test Accuracy', 0.3472956486376576)
+windowed_subject103.pkl
+('Train Accuracy', 0.7640758873929009)
+('Test Accuracy', 0.7666459240821406)
+windowed_subject109.pkl
+('Train Accuracy', 0.768783542039356)
+('Test Accuracy', 0.0)
+windowed_subject105.pkl
+('Train Accuracy', 0.7613024583252254)
+('Test Accuracy', 0.6252964426877471)
+windowed_subject101.pkl
+('Train Accuracy', 0.7914909927175163)
+('Test Accuracy', 0.4491931966855648)
+windowed_subject106.pkl
+('Train Accuracy', 0.7583866837387964)
+('Test Accuracy', 0.7296948861194671)
+windowed_subject102.pkl
+('Train Accuracy', 0.7730053448386889)
+('Test Accuracy', 0.7034739454094293)
+windowed_subject107.pkl
+('Train Accuracy', 0.7550284629981024)
+('Test Accuracy', 0.7941038839494619)
+windowed_subject104.pkl
+('Train Accuracy', 0.7691724573594441)
+('Test Accuracy', 0.7543693906471421)
