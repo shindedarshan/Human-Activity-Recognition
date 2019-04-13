@@ -122,5 +122,9 @@ if mode == "LOSO":
     Run_LOSO(model)
 elif mode == "cv":
     Run_CV(model)
+elif mode=="act":
+    Run_act(model,category)
+elif mode=="sub":
+    Run_sub(model,category)
 else:
     print("Enter Valid Mode")
