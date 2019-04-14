@@ -70,7 +70,9 @@ def Run_CV(model):
 def Run_act(model, category):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
-    file_name = 'windowed_activity' + category + '.pkl'
+    categories = ['1','2','3','4','5','6','7','12','13','16','17','24']
+    for category in categories:
+	file_name = 'windowed_activity' + category + '.pkl'
     activity_file = glob.glob(file_name)
     activity = pd.DataFrame()
     pklfile = open(activity_file[0], 'rb')
@@ -85,17 +87,19 @@ def Run_act(model, category):
 def Run_sub(model, category):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
-    file_name = 'windowed_subject' + category + '.pkl'
-    subject_file = glob.glob(file_name)
-    subject = pd.DataFrame()
-    pklfile = open(subject_file[0], 'rb')
-    data_from_pickle = pickle.load(pklfile)
-    subject = subject.append(data_from_pickle)
-    X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, category)
-    class_weights = get_class_weights(y_train)
-    basepath = os.path.abspath('../Model_Files/')
-    modelFile = str(model) + '_activity_model (subject_' + category + ')'
-    RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+    categories = ['101','102','103','104','105','106','107','108','109']
+    for category in categories:
+	file_name = 'windowed_subject' + category + '.pkl'
+	subject_file = glob.glob(file_name)
+	subject = pd.DataFrame()
+	pklfile = open(subject_file[0], 'rb')
+	data_from_pickle = pickle.load(pklfile)
+	subject = subject.append(data_from_pickle)
+	X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, category)
+	class_weights = get_class_weights(y_train)
+	basepath = os.path.abspath('../Model_Files/')
+	modelFile = str(model) + '_activity_model (subject_' + category + ')'
+	RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
 
     
 def RunModel(X_train, X_test, y_train, y_test, model, class_weights, modelFile):
@@ -118,6 +122,7 @@ def RunModel(X_train, X_test, y_train, y_test, model, class_weights, modelFile):
 
 model = sys.argv[1]
 mode = sys.argv[2]
+category = sys.argv[3]
 if mode == "LOSO":
     Run_LOSO(model)
 elif mode == "cv":
