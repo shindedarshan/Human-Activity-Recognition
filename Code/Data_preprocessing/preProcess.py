@@ -19,8 +19,8 @@ def preprocess_data(basepath, infile, outfile, wrt):
     
     #Interpolate nans
     subject = subject.astype(float).interpolate(method = 'linear', limit_direction = 'forward', axis = 0)
-    imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
-    subject = imp.fit_transform(subject)
+    #imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
+    #subject = imp.fit_transform(subject)
     subject = pd.DataFrame(subject)
     subject.columns = headers
     subject = subject.drop(drop_columns, axis = 1)
@@ -45,7 +45,10 @@ def preprocess_data(basepath, infile, outfile, wrt):
         activities = subject.activityid.unique()
         for activity in activities:
             activity_df = subject.loc[subject['activityid'] == activity]
-            activity_df.drop(['activityid'], axis = 1)
+            activity_df = activity_df.drop(['activityid'], axis = 1)
+            activity_df = activity_df.drop(['imu1temp'], axis = 1)
+            activity_df = activity_df.drop(['imu2temp'], axis = 1)
+            activity_df = activity_df.drop(['imu3temp'], axis = 1)
             rows_count = activity_df.shape[0]
             activity_target_list = [target] * rows_count
             index = np.array(list(range(rows_count)))
@@ -64,7 +67,7 @@ def preprocess_data(basepath, infile, outfile, wrt):
             with open('activity' + str(int(activity)) + '.pkl', 'wb') as file:
                     pickle.dump(activity_data, file)
         
-basepath = os.path.abspath('PAMAP2_Dataset/Protocol/')
+basepath = os.path.abspath('../../Data/PAMAP2_Dataset/Protocol/')
 
 os.chdir(basepath)
 data_files = glob.glob('*.dat')
