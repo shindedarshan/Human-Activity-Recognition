@@ -71,31 +71,57 @@ def Run_act(model, category):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
     categories = ['1','2','3','4','5','6','7','12','13','16','17','24']
-    for category in categories:
+    if(category == '0'):
+	for category in categories:
+		file_name = 'windowed_activity' + category + '.pkl'
+		activity_file = glob.glob(file_name)
+		activity = pd.DataFrame()
+		pklfile = open(activity_file[0], 'rb')
+		data_from_pickle = pickle.load(pklfile)
+		activity = activity.append(data_from_pickle)
+		X_train, X_test, y_train, y_test = preprocess_dataframe(activity, True, int(category))
+		class_weights = get_class_weights(y_train)
+		basepath = os.path.abspath('../Model_Files/')
+		modelFile = str(model) + '_activity_model (activity_' + category + ')'
+		RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+    else:
 	file_name = 'windowed_activity' + category + '.pkl'
-    activity_file = glob.glob(file_name)
-    activity = pd.DataFrame()
-    pklfile = open(activity_file[0], 'rb')
-    data_from_pickle = pickle.load(pklfile)
-    activity = activity.append(data_from_pickle)
-    X_train, X_test, y_train, y_test = preprocess_dataframe(activity, True, category)
-    class_weights = get_class_weights(y_train)
-    basepath = os.path.abspath('../Model_Files/')
-    modelFile = str(model) + '_activity_model (activity_' + category + ')'
-    RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+	activity_file = glob.glob(file_name)
+	activity = pd.DataFrame()
+	pklfile = open(activity_file[0], 'rb')
+	data_from_pickle = pickle.load(pklfile)
+	activity = activity.append(data_from_pickle)
+	X_train, X_test, y_train, y_test = preprocess_dataframe(activity, True, int(category))
+	class_weights = get_class_weights(y_train)
+	basepath = os.path.abspath('../Model_Files/')
+	modelFile = str(model) + '_activity_model (activity_' + category + ')'
+	RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
 
 def Run_sub(model, category):
     basepath = os.path.abspath('../Data/PAMAP2_Dataset/Protocol/')
     os.chdir(basepath)
     categories = ['101','102','103','104','105','106','107','108','109']
-    for category in categories:
+    if(category == '0'):
+	for category in categories:
+		file_name = 'windowed_subject' + category + '.pkl'
+		subject_file = glob.glob(file_name)
+		subject = pd.DataFrame()
+		pklfile = open(subject_file[0], 'rb')
+		data_from_pickle = pickle.load(pklfile)
+		subject = subject.append(data_from_pickle)
+		X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, int(category))
+		class_weights = get_class_weights(y_train)
+		basepath = os.path.abspath('../Model_Files/')
+		modelFile = str(model) + '_activity_model (subject_' + category + ')'
+		RunModel(X_train, X_test, y_train, y_test, model, class_weights, basepath + modelFile)
+    else:
 	file_name = 'windowed_subject' + category + '.pkl'
 	subject_file = glob.glob(file_name)
 	subject = pd.DataFrame()
 	pklfile = open(subject_file[0], 'rb')
 	data_from_pickle = pickle.load(pklfile)
 	subject = subject.append(data_from_pickle)
-	X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, category)
+	X_train, X_test, y_train, y_test = preprocess_dataframe(subject, True, int(category))
 	class_weights = get_class_weights(y_train)
 	basepath = os.path.abspath('../Model_Files/')
 	modelFile = str(model) + '_activity_model (subject_' + category + ')'
@@ -120,16 +146,23 @@ def RunModel(X_train, X_test, y_train, y_test, model, class_weights, modelFile):
     else:
         print("Enter valid model")
 
-model = sys.argv[1]
-mode = sys.argv[2]
-category = sys.argv[3]
-if mode == "LOSO":
-    Run_LOSO(model)
-elif mode == "cv":
-    Run_CV(model)
-elif mode=="act":
-    Run_act(model,category)
-elif mode=="sub":
-    Run_sub(model,category)
+question_no = sys.argv[1]
+if(question_no == '1'):
+	id = sys.argv[2]
+	model = sys.argv[3]
+	Run_act(model,id)
+elif(question_no == '2'):
+	id = sys.argv[2]
+	model = sys.argv[3]
+	Run_sub(model,id)
+elif(question_no == '3'):
+	mode = sys.argv[2]
+	model = sys.argv[3]
+	if(mode == 'cv'):
+		Run_CV(model)
+	elif(mode == 'LOSO'):
+		Run_LOSO(model)
+	else:
+		print("enter Correct mode")
 else:
-    print("Enter Valid Mode")
+	print("Please enter correct quetion number(1, 2 or 3)")
