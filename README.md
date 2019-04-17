@@ -38,4 +38,4 @@ Command to run Driver.py file will be as follows:
 
        python3 Driver.py param1 param2 param3
 
-Note: Data is already preprocessed, so no need to run preprocess.py and windowed.py seperately.
+Note: Data is already preprocessed, so no need to run preProcess.py and Window.py seperately.
