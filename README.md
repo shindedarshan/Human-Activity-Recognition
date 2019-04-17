@@ -27,9 +27,11 @@ For question_number = 1 or 2:
 For question_number = 3:
 
 2. mode: 
+
        Possible values for this parameter are cv and LOSO
 
 3. model: 
+       
        Possible values for this parameter are logistic, naive-bayes, knn, svm, decison-tree and boosted-tree
 
 Command to run Driver.py file will be as follows:
