@@ -20,18 +20,20 @@ For question_number = 1 or 2:
 
 2. id: Subject id (For Question-1) or Activity id (For Question-2) 
        
-       possible values for subject id are 101, 102, 103, 104, 105, 106, 107, 108 and 109
+       Possible values for subject id are 101, 102, 103, 104, 105, 106, 107, 108 and 109
        
-       possible values for activity id are 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17 and 24
+       Possible values for activity id are 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17 and 24
 
 For question_number = 3:
 
-2. mode: Possible values for this parameter are cv and LOSO
+2. mode: 
+       Possible values for this parameter are cv and LOSO
 
-3. model: Possible values for this parameter are logistic, naive-bayes, knn, svm, decison-tree and boosted-tree
+3. model: 
+       Possible values for this parameter are logistic, naive-bayes, knn, svm, decison-tree and boosted-tree
 
 Command to run Driver.py file will be as follows:
 
-python3 Driver.py param1 param2 param3
+       python3 Driver.py param1 param2 param3
 
 Note: Data is already preprocessed, so no need to run preprocess.py and windowed.py seperately.
