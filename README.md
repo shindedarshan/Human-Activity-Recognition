@@ -6,7 +6,7 @@ To run the code it is important to store your data at correct path. Create a fol
 
 All .pkl files should present inside Protocol folder.
 
-Driver.py is the starting pointof the code. To run this file 3 paramters are required.
+Driver.py is the starting point of the code. To run this file 3 paramters are required.
 
 1. question_number: Possible values for this paramters are 1, 2 and 3.
 
