@@ -8,7 +8,7 @@ All .pkl files should present inside Protocol folder.
 
 Driver.py is the starting point of the code. To run this file 3 paramters are required.
 
-1. question_number: Possible values for this paramters are 1, 2 and 3.
+param1 - question_number: Possible values for this parameters are 1, 2 and 3.
 
                     1. Predict activity given subject.
                     
@@ -18,7 +18,7 @@ Driver.py is the starting point of the code. To run this file 3 paramters are re
                     
 For question_number = 1 or 2:
 
-2. id: Subject id (For Question-1) or Activity id (For Question-2) 
+param2 - id: Subject id (For Question-1) or Activity id (For Question-2) 
        
        Possible values for subject id are 101, 102, 103, 104, 105, 106, 107, 108 and 109
        
@@ -26,11 +26,11 @@ For question_number = 1 or 2:
 
 For question_number = 3:
 
-2. mode: 
+param2 - mode: 
 
        Possible values for this parameter are cv and LOSO
 
-3. model: 
+param3 - model: 
        
        Possible values for this parameter are logistic, naive-bayes, knn, svm, decison-tree and boosted-tree
 
