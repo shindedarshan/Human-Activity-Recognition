@@ -37,5 +37,9 @@ param3 - model:
 Command to run Driver.py file will be as follows:
 
        python3 Driver.py param1 param2 param3
+       
+All data files are available at following URL:
+       
+       https://iu.box.com/s/k4vy815gi9zqrta5pknjb0bu1er2bfl7
 
 Note: Data is already preprocessed, so no need to run preProcess.py and Window.py seperately.
