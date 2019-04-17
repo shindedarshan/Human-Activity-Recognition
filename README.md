@@ -2,9 +2,9 @@
 
 To run the code it is important to store your data at correct path. Create a folder structure as mentioned below at the same location where your code is stored.
 
-../Data/PAMAP2_Dataset/Protocol/
+       ../Data/PAMAP2_Dataset/Protocol/
 
-All .dat files should present inside Protocol folder.
+All .pkl files should present inside Protocol folder.
 
 Driver.py is the starting pointof the code. To run this file 3 paramters are required.
 
