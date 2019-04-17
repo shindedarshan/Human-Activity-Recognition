@@ -147,11 +147,11 @@ def RunModel(X_train, X_test, y_train, y_test, model, class_weights, modelFile):
         print("Enter valid model")
 
 question_no = sys.argv[1]
-if(question_no == '1'):
+if(question_no == '2'):
 	id = sys.argv[2]
 	model = sys.argv[3]
 	Run_act(model,id)
-elif(question_no == '2'):
+elif(question_no == '1'):
 	id = sys.argv[2]
 	model = sys.argv[3]
 	Run_sub(model,id)
